@@ -33,6 +33,24 @@ function applyI18n() {
   } catch {}
 }
 
+function applyVersionToTitle() {
+  const man = (chrome.runtime && typeof chrome.runtime.getManifest === "function")
+    ? chrome.runtime.getManifest()
+    : null;
+  const ver = man?.version || man?.version_name;
+  if (!ver) return;
+
+  const base =
+    (chrome.i18n && typeof chrome.i18n.getMessage === "function" && chrome.i18n.getMessage("ui_title"))
+      || document.title
+      || "Notion Batch Clipper";
+
+  const display = `${base} v${ver}`;
+  const h = document.querySelector(".title");
+  if (h) h.textContent = display;   // 見出し
+  document.title = display;         // <title>
+}
+
 // ---- UIロック/アンロック＆検証 ----
 function setControlsEnabled(enabled) {
   ["fetchSpacesBtn","workspaceSelect","dbSelect","closeTabs"].forEach(id => {
@@ -209,6 +227,7 @@ async function bootstrap() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   applyI18n();
+  applyVersionToTitle();
   try { await bootstrap(); } catch (e) { showError(e.message); }
 
   // 再取得：変更は即保存
