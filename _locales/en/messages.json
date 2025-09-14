@@ -1,0 +1,13 @@
+{
+  "appName":          { "message": "Notion Batch Clipper" },
+  "appDescription":   { "message": "Batch-clip all tabs in the current window to Notion." },
+  "actionTitle":      { "message": "Clip all tabs in this window at once." },
+
+  "ui_fetch":         { "message": "Refresh Info" },
+  "ui_wsLabel":       { "message": "Workspace" },
+  "ui_dbLabel":       { "message": "Database" },
+  "ui_hint":          { "message": "* Up to 50 most recently edited items." },
+  "ui_closeTabs":     { "message": "Close tabs after saving" },
+  "ui_run":           { "message": "Run" },
+  "ui_title":         { "message": "Notion Batch Clipper" }
+}

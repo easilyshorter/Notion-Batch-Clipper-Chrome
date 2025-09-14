@@ -1,0 +1,13 @@
+{
+  "appName":          { "message": "Notion Batch Clipper" },
+  "appDescription":   { "message": "現在ウィンドウの全タブを Notion へ一括クリップします。" },
+  "actionTitle":      { "message": "このウィンドウを一括クリップします。" },
+
+  "ui_fetch":         { "message": "情報再取得" },
+  "ui_wsLabel":       { "message": "保存先ワークスペース" },
+  "ui_dbLabel":       { "message": "保存先データベース" },
+  "ui_hint":          { "message": "※ 直近編集順で最大50件。" },
+  "ui_closeTabs":     { "message": "保存後にタブを閉じる" },
+  "ui_run":           { "message": "実行" },
+  "ui_title":         { "message": "Notion Batch Clipper" }
+}

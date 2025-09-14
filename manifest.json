@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "default_locale": "en",
+  "name": "__MSG_appName__",
+  "version": "1.0.1",
+  "description": "__MSG_appDescription__",
+
+  "permissions": ["tabs", "storage", "cookies", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>", "https://www.notion.so/*"],
+
+  "action": {
+    "default_title": "__MSG_actionTitle__",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "32": "icon-32.png",
+    "128": "icon-128.png"
+    }
+  },
+
+  "icons": {
+    "32":  "icon-32.png",
+    "128": "icon-128.png"
+  },
+
+  "background": {
+    "service_worker": "sw.js",
+    "type": "module"
+  },
+
+  "web_accessible_resources": [{
+    "resources": ["execute.mp3"],
+    "matches": ["<all_urls>"]
+  }]
+}

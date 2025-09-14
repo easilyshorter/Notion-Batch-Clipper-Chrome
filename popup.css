@@ -1,0 +1,81 @@
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  margin: 16px;
+  width: 360px;
+  font-size: 14px;
+  color: #2f3437;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.hint {
+  color: #666;
+  font-size: 12px;
+  margin: 4px 0 10px 0;
+  line-height: 1.4;
+}
+#status {
+  margin-top: 8px;
+  font-size: 12px;
+  white-space: pre-wrap;
+  color: #b00;
+  display: none;
+}
+
+.field-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+}
+.field-label {
+  flex: 0 0 130px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+select {
+  flex: 1 1 auto;
+  width: 100%;
+  padding: 6px;
+  font-size: 14px;
+}
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+
+button {
+  background-color: #2eaadc;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+button:hover:enabled { background-color: #1795c7; }
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
