@@ -2,6 +2,7 @@ const STORE_KEY = "nbc_settings";
 const NOTION_BASE = "https://www.notion.so";
 const API = (p) => `${NOTION_BASE}/api/v3/${p}`;
 const SOUND_PATH = "execute.mp3";
+let popupAudio = null;
 
 const $ = (id) => document.getElementById(id);
 const showError = (msg) => {
@@ -182,14 +183,14 @@ async function saveAll() {
 }
 
 // ---------- PlaySound ----------
-function playInTab(tabId) {
-  const url = chrome.runtime.getURL(SOUND_PATH);
-  return chrome.scripting.executeScript({
-    target: { tabId },
-    world: "MAIN",
-    func: (src) => { try { const a = new Audio(src); a.volume = 0.9; a.play().catch(()=>{}); } catch(_){} },
-    args: [url]
-  });
+function playInTab() {
+  if (!popupAudio) {
+    const url = chrome.runtime.getURL(SOUND_PATH);
+    const a = new Audio(url);
+    a.volume = 0.9;
+    popupAudio = a;
+  }
+  return popupAudio;
 }
 
 // ---------- 初期化 & イベント ----------
@@ -276,25 +277,40 @@ document.addEventListener("DOMContentLoaded", async () => {
   $("dbSelect").onchange   = () => { saveAll().catch(e => showError(e.message)); };
   $("closeTabs").onchange  = () => { saveAll().catch(e => showError(e.message)); };
 
-  // 実行：クリップは fire-and-forget（結果は問わない）／音は常時鳴らして即クローズ
+  // 実行：保存結果に応じてエラー表示／クリック時に必ず音を鳴らす
   $("runBtn").onclick = () => {
     $("runBtn").disabled = true;
     showError("");
 
-    // クリップ命令（応答は待たない）
-    chrome.runtime.sendMessage({ action: "clipNow" });
+    // ここでユーザー操作直後に音を鳴らす（自動再生制限を確実に回避）
+    try {
+      const a = playInTab();
+      a.currentTime = 0;
+      a.play().catch(() => {});
+    } catch (_) {}
 
-    // 音を鳴らす：アクティブ→同ウィンドウの http/https タブへ順に注入（どこかで鳴ればOK）
-    chrome.tabs.query({ currentWindow: true }, (tabs) => {
-      chrome.tabs.query({ active: true, currentWindow: true }, async (act) => {
-        const active = act && act[0];
-        const tryTargets = [];
-        if (active && active.id != null) tryTargets.push(active.id);
-        for (const t of tabs) if (/^https?:/i.test(t.url || "")) tryTargets.push(t.id);
-        const uniq = [...new Set(tryTargets)].filter(id => id != null);
-        for (const tabId of uniq) { try { await playInTab(tabId); break; } catch(_){} }
-        window.close();
-      });
+    chrome.runtime.sendMessage({ action: "clipNow" }, (resp) => {
+      const err = chrome.runtime.lastError;
+      if (err) {
+        showError("拡張機能エラー: " + err.message);
+        $("runBtn").disabled = false;
+        return;
+      }
+      if (!resp) {
+        showError("拡張機能からの応答がありません。");
+        $("runBtn").disabled = false;
+        return;
+      }
+      if (!resp.ok) {
+        showError(resp.error || "不明なエラーが発生しました。");
+        $("runBtn").disabled = false;
+        return;
+      }
+
+      // ここまで来たら「保存成功」
+      showError("");
+      $("runBtn").disabled = false;
+      window.close();
     });
   };
 });

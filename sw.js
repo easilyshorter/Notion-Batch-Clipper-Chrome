@@ -3,11 +3,8 @@ const NOTION_BASE = "https://www.notion.so";
 const API = (path) => `${NOTION_BASE}/api/v3/${path}`;
 
 /* storage */
-function getFromSync(key) {
-  return new Promise((resolve) => chrome.storage.sync.get(key, (obj) => resolve(obj[key])));
-}
 async function getSettings() {
-  return (await getFromSync(STORE_KEY)) || {};
+  return new Promise((resolve) => chrome.storage.sync.get(STORE_KEY, (obj) => resolve(obj[STORE_KEY] || {})));
 }
 
 /* cookies */
@@ -54,7 +51,7 @@ async function clipAllTabs() {
 
   // 1) 対象タブ抽出（http/https のみ）
   const allTabs = await chrome.tabs.query({ currentWindow: true });
-  const httpTabs = allTabs.filter((t) => /^https?:/i.test(t.url || ""));
+  const httpTabs = allTabs.filter((t) => /^https?:/i.test(t.url || "")).filter((t) => !isLocalhostUrl(t.url || ""));
   if (!httpTabs.length) throw new Error("保存対象タブがありません。");
 
   // 2) Notionへ一括投入（WebClipper互換）
@@ -82,7 +79,23 @@ async function clipAllTabs() {
   }
 }
 
-/* popup からの実行要求（UI側は結果を待たず即クローズ） */
+/* localhostを検出する */
+function isLocalhostUrl(url) {
+  try {
+    const u = new URL(url);
+    const host = (u.hostname || "").toLowerCase();
+    return (
+      host === "localhost" ||
+      host === "127.0.0.1" ||
+      host === "::1" ||
+      host.endsWith(".localhost")
+    );
+  } catch {
+    return false;
+  }
+}
+
+/* popup からの実行要求（UI は sendMessage の応答を待って結果を表示する） */
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg.action === "clipNow") {
     clipAllTabs()

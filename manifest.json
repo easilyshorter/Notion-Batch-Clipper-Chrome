@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "default_locale": "en",
   "name": "__MSG_appName__",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "__MSG_appDescription__",
 
   "permissions": ["tabs", "storage", "cookies", "activeTab", "scripting"],
